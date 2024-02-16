@@ -1,0 +1,26 @@
+Networks: 
+-----------------
+S Spray Network 
+D Drip Network 
+B Bubblier Network 
+HD High Drip Network 
+MD Medium Drip Network 
+LD Low Drip Network 
+-------------------------
+
+Pumps: 
+1  or 2 or 3 or 4 or 5 or 6
+------------------------------------
+
+
+Valve Code 
+First Alphabet = Controller 
+Second Alphabet   = Network 
+
+Note: the valves should distributed according to (Batching Condoler)) 
+
+----------------------------
+
+
+
+
