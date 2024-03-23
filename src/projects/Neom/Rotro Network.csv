@@ -1,0 +1,5 @@
+A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X
+Batch ID, # Valves / Batch, Total Batch GPM, Controller E, Controller H,,,,,,,,,,,, Controller I,,,,,, Controller J,
+Batch #1, 20, 291.200, E-R20,H-R03, H-R04, H-R11, H-R08, H-R13, H-R09, H-R01, H-R05, H-R06, H-R07, H-R12, H-R10,I-R19, I-R14, I-R16, I-R18, I-R17, I-R15,J-R02,
+, , , 30.770,24.390, 23.420, 17.870, 16.110, 16.200, 15.450, 13.070, 11.310, 11.930, 10.960, 8.100, 5.790,28.040, 27.120, 8.230, 6.290, 5.280, 2.680,8.190,
+,,,,,,,,,,,,,,,,,,,,,,,

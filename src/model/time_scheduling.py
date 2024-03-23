@@ -1,17 +1,20 @@
 from tqdm import tqdm
 from copy import copy
-from model.knapsac import knapsack, knapsack_with_tolerance
+from model.knapsac import knapsack, knapsack_with_tolerance, knapsack_with_tolerance_maxitems
 from pandas import DataFrame
 from itertools import chain
 from utils import Utils as ut
 from constants import network_type_map
+import random
+from time import time
 
+random.seed(time())
 class TimeSchedulingAlgorithm:
 
 
 
     @classmethod
-    def find_best_scheduling(cls, data: DataFrame, pump_gpm:float, pump_type:int, allow_exact:bool=True, allow_overdosing:bool=False, allow_underdosing:bool=False):
+    def find_best_scheduling(cls, data: DataFrame, pump_gpm:float, pump_type:int, allow_exact:bool=True, allow_overdosing:bool=False, allow_underdosing:bool=False, num_sim_valves = 9999, runtimes=None):
 
         best_number_of_batches = 99999
         best_solution = None
@@ -23,7 +26,7 @@ class TimeSchedulingAlgorithm:
             pump_gpm_corrected = pump_gpm * correction_percentage
             
             try:
-                networks_batches_solution = cls.compute_schedule_trial(data, pump_gpm_corrected, pump_type)
+                networks_batches_solution = cls.compute_schedule_trial(data, pump_gpm_corrected, pump_type, num_sim_valves, runtimes)
             except NoSolution:
                 print(f"Could not find a working {solution_type} solution for pump GPM of {pump_gpm}")
 
@@ -133,11 +136,13 @@ class TimeSchedulingAlgorithm:
 
 
     @classmethod
-    def compute_schedule_trial(cls, data: DataFrame, pump_gpm:float, pump_type: int):
+    def compute_schedule_trial(cls, data: DataFrame, pump_gpm:float, pump_type: int, num_sim_valves:int, batch_runtime:dict):
 
         valve_type_keys = data.valve_type_key.unique().tolist()
 
         networks_batches = []
+        
+        
 
         for network_key in valve_type_keys:
 
@@ -145,7 +150,7 @@ class TimeSchedulingAlgorithm:
                 ["Valve", "gpm_int", "gpm"]
             ]
 
-            solution_dictionary =  cls.distibute_valves_into_batches(per_key_valves, pump_gpm)
+            solution_dictionary =  cls.distibute_valves_into_batches(per_key_valves, pump_gpm, num_sim_valves)
 
             ##* Try further optimization of the problem
             solution_dictionary = cls.check_for_further_optimizations(solution_dictionary, pump_gpm, pump_type)
@@ -157,10 +162,11 @@ class TimeSchedulingAlgorithm:
                 for k in column_keys
             }
 
-            headers = "Batch ID, # Valves / Batch, Total Batch GPM, " + ", ".join(
+            headers = "Batch ID, # Valves / Batch, Total Batch GPM, Runtime, " + ", ".join(
                 f"Controller {key}" + "," * (controller_cell_spans[key] - 1)
                 for key in sorted(column_keys)
             )
+
             dataframe_lines = [headers]
 
             for idx, group in enumerate(solution_dictionary):
@@ -168,8 +174,13 @@ class TimeSchedulingAlgorithm:
                 flattened = list((chain.from_iterable(group.values())))
 
                 total_gpm = "{:5.3f}".format(sum([f_[-1] for f_ in flattened]))
-                names_line = f"Batch #{idx+1}, {len(flattened)}, { total_gpm }, "
-                values_line = f", , , "
+                
+                batch_time = "?"
+                if batch_runtime:
+                    batch_time = batch_runtime[network_key]
+
+                names_line = f"Batch #{idx+1}, {len(flattened)}, { total_gpm }, { batch_time }, "
+                values_line = f", , , ,"
                 for key in sorted(column_keys):
 
                     group_vals = group.get(key, [])
@@ -189,8 +200,10 @@ class TimeSchedulingAlgorithm:
                         values_line += ", "
                     if names_line.strip()[-1] != ",":
                         names_line += ", "
+
                 dataframe_lines.append(names_line)
                 dataframe_lines.append(values_line)
+                
 
             dataframe_lines_ = [x.split(",") for x in dataframe_lines]
 
@@ -203,7 +216,7 @@ class TimeSchedulingAlgorithm:
                 columns=[ut.num_to_col(i_ + 1) for i_ in range(max_width)],
             )
 
-            header = f'{ network_type_map.get(network_key, network_key)} Network,    Total GPM = {  "{:.3f}".format(per_key_valves["gpm"].sum())},\tNumber of valves = {len(per_key_valves["gpm"])}'
+            header = f'{ network_type_map.get(network_key, network_key)} Network, Total GPM = {  "{:.3f}".format(per_key_valves["gpm"].sum())},\tNumber of valves = {len(per_key_valves["gpm"])}, Total Runtime = { batch_runtime[network_key]* len(solution_dictionary) } minutes'
 
 
             networks_batches.append((key, controller_cell_spans, header, network_schedule))
@@ -212,7 +225,7 @@ class TimeSchedulingAlgorithm:
         return networks_batches
 
     @classmethod
-    def distibute_valves_into_batches(cls, valve_data: DataFrame, pump_unit_gpm: float):
+    def distibute_valves_into_batches(cls, valve_data: DataFrame, pump_unit_gpm: float, num_sim_valves:int):
 
         values = [1 for _ in range(len(valve_data))]
         weights = list(zip(valve_data["gpm_int"].tolist(), valve_data["Valve"].tolist()))
@@ -222,7 +235,10 @@ class TimeSchedulingAlgorithm:
         progress_bar = tqdm(total=len(valve_data))
 
         while len(weights) > 0:
-            group_ = knapsack_with_tolerance(weights, values, pump_unit_gpm)
+
+            random.shuffle(weights)
+
+            group_ = knapsack_with_tolerance_maxitems(weights, values, pump_unit_gpm, num_sim_valves)
 
             if group_ is None or len(group_) == 0:
                 raise NoSolution
