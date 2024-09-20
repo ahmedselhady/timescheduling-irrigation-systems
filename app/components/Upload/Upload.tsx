@@ -36,10 +36,10 @@ const Upload = () => {
   ) => {
     const formData = new FormData();
     if (uploadedFile === null) {
-      alert("please enter a file");
+      alert("please select a file");
       return;
     }
-    formData.append("file", uploadedFile);
+    formData.append("data_file", uploadedFile);
     formData.append("pump_unit_estimated_gpm", String(pumpUnitValue));
     try {
       const response = await fetch("http://127.0.0.1:5000/", {
