@@ -218,12 +218,10 @@ def convert_to_json(result):
 # groups are: B, HD, LD, R, MD
 
 
-def create_schedule(data_file, pump_unit_estimated_gpm):
+def create_schedule(file_name, pump_unit_estimated_gpm):
     # Use absolute path
     # file_path = os.path.join(os.path.dirname(__file__), "data.txt")
-    with open(data_file, "r") as file:
-    # for i in range(50):
-    #     print(file.readline())
+    with open("uploads/" + file_name, "r") as file:
         result = parse_file(file, pump_unit_estimated_gpm)
         result = convert_to_json(result)
         return result

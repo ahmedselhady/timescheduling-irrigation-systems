@@ -22,18 +22,16 @@ def main():
         return 'No pump_unit_estimated_gpm provided', 400
     
     data_file = request.files['data_file']
+    file_extension = os.path.splitext(data_file.filename)[1]  # This will return extension like '.txt', '.jpg', etc.
     pump_unit_estimated_gpm = request.form['pump_unit_estimated_gpm']
-    
+    pump_unit_estimated_gpm = float(pump_unit_estimated_gpm)
     # Check if a file is selected
     if data_file.filename == '':
         return 'No selected file', 400
     
-    
-    # data = request.get_json()
-    # pump_unit_estimated_gpm = data['pump_unit_estimated_gpm']
-    # pump_unit_estimated_gpm = float(pump_unit_estimated_gpm)
-    print(float(pump_unit_estimated_gpm))
-    schedule_result = schedule.create_schedule(data_file, pump_unit_estimated_gpm)
+    file_name = f"data_file{file_extension}"
+    data_file.save(os.path.join(UPLOAD_FOLDER, file_name))
+    schedule_result = schedule.create_schedule(file_name, pump_unit_estimated_gpm)
     return schedule_result
 
 if __name__ == '__main__':
