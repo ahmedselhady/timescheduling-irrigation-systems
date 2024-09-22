@@ -5,7 +5,7 @@ from datetime import date
 
 from utils.database import get_db, Base
 from models.user import UserDB
-from routes.hashing import hash_password, verify_password
+from utils.hashing import hash_password, verify_password
 from utils.token_generator import create_access_token
 
 router = APIRouter()
