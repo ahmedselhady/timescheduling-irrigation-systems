@@ -1,0 +1,8 @@
+hamada
+22/09/2024 17:22:42###1105.0###3
+Drip Network.csv###Drip Network,    Total GPM = 15133.150,	Number of valves = 447
+Drip Network.csv###{'D': 11, 'A': 13, 'E': 13, 'C': 16, 'B': 18}
+Bubbler Network.csv###Bubbler Network,    Total GPM = 3713.750,	Number of valves = 162
+Bubbler Network.csv###{'D': 10, 'A': 18, 'E': 14, 'C': 18, 'B': 13}
+Spray Network.csv###Spray Network,    Total GPM = 1536.730,	Number of valves = 57
+Spray Network.csv###{'D': 10, 'A': 12, 'E': 10, 'C': 9, 'B': 8}

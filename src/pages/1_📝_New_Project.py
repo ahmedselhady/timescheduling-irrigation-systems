@@ -9,34 +9,24 @@ import shutil
 from datetime import datetime
 import plotly.express as px
 
-network_type_map = {
-    "S": "Spray",
-    "D": "Drip",
-    "B": "Bubbler",
-    "H": "High Drip",
-    "L": "Low Drip",
-    "M": "Medium Drip",
-    "R": "Rotro",
-}
-
 st.set_page_config(layout="wide", page_icon=":memo:")
 
 data_frames = []
 
 
-def save_projects(to_be_saved, title: str, pump_gpm: float, pump_type: int):
-
+def save_projects(to_be_saved, title:str, pump_gpm:float, pump_type:int):
+    
     print(f"Got title {title}")
-    suggested_path = Path(__file__).parent.parent / "projects" / title.strip()
+    suggested_path = Path(__file__).parent.parent/"projects"/ title.strip()
     modified_path = suggested_path
     idx = 1
     while Path.exists(Path(modified_path)):
 
-        modified_path = str(suggested_path) + "_" + str(idx)
+        modified_path = str(suggested_path) + '_' + str(idx)
         idx += 1
     Path.mkdir(Path(modified_path))
 
-    meta_data = open(f"{str(modified_path)}/metadata.txt", "w")
+    meta_data = open(f"{str(modified_path)}/metadata.txt", "w") 
 
     dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     meta_data.write(f"{title}\n")
@@ -48,100 +38,24 @@ def save_projects(to_be_saved, title: str, pump_gpm: float, pump_type: int):
             file_name = make[0].split(",")[0]
             make[-1].to_csv(f"{str(modified_path)}/{file_name}.csv", index=False)
             meta_data.write(f"{file_name}.csv###{make[0]}")
-            meta_data.write("\n")
+            meta_data.write("\n") 
             meta_data.write(f"{file_name}.csv###{make[1]}")
-            meta_data.write("\n")
+            meta_data.write("\n") 
 
-        st.toast(f"Project {title} was saved successfuly!", icon="😍")
+        st.toast(f'Project {title} was saved successfuly!', icon='😍')  
     except:
         print("An error occurred")
         shutil.rmtree(Path(modified_path))
 
-
-def acceptable_state(project_title, pump_unit_estimated_gpm, network_keys):
-    #print(project_title, pump_unit_estimated_gpm)
-    #print("### ", st.session_state["project_file"])
-    all_valid = project_title is not None and pump_unit_estimated_gpm is not None
-    if network_keys is None:
-        return False
-    for key in network_keys:
-        #print(key, " ---> ", st.session_state.get(f"runtimes_{key}", False))
-        all_valid = all_valid and st.session_state.get(f"runtimes_{key}", False)
-    return all_valid
-
-
-if "project_file" not in st.session_state:
-    st.session_state["project_file"] = None
-
 if st.session_state.get("authentication_status", False):
-    project_file = None
-    st.header("Project Files: ")
-    with st.form("proj_files") as upfiles:
 
-        uploaded_file = st.file_uploader(
-            "Choose a file", label_visibility="collapsed", key="file_uploader"
-        )
-
-        c1, c2, c3 = st.columns([1, 1, 1], gap="large")
-        with c3:
-            c3_1, c3_2 = st.columns([1, 1])
-            with c3_2:
-                file_added = st.form_submit_button("Upload")
-
-        if file_added and uploaded_file:
-            project_file = ut.read_datafile_as_dataframe(uploaded_file)
-            st.session_state["project_file"] = project_file
-
-    # if project_file is not None:
-    st.header("Project Configurations")
     with st.form("GPM Valve Grouping Algorithm") as form_app:
 
         project_title = st.text_input("Project Title")
-        # st.write("Configurations:")
-        data = None
-        valve_type_keys = None
-        if st.session_state["project_file"] is not None:  # project_file is not None:
-            st.divider()
-            st.write("**Networks Runtimes**")
-            data = st.session_state["project_file"]
-            data["valve_type_key"] = data.Valve.astype(str).apply(
-                lambda x: x.strip().split("-")[-1][0]
-            )
-            valve_type_keys = data.valve_type_key.unique().tolist()
-            print(valve_type_keys)
 
-            col_A, col_B, col_C = st.columns([0.025, 0.8, 0.175])
-            with col_B:
-                for key in valve_type_keys:
-                    st.number_input(
-                        f"Runtime for {network_type_map[key]} Network (min/batch)",
-                        key=f"runtimes_{key}",
-                        value=22,
-                    )
-            # with col_A:
-            # for key in valve_type_keys:
-            #     st.write(f"Runtime for {network_type_map[key]} Network")
-            st.divider()
-
+        st.write("Configurations:")
+        uploaded_file = st.file_uploader("Choose a file")
         pump_unit_estimated_gpm = st.number_input("Pump Unit Estimated GPM")
-
-        controller_type2simvalves = {
-            "hunter-ACC": 6,
-            "hunter-A2C": 6,
-            "hunter-Acc/99D": 6,
-            "hunter-A2C/75D": 30,
-            "hunter-A2C/150D": 20,
-            "hunter-ICC2": 2,
-            "rainbird-ESP/LXME": 4,
-            "rainbird-ESP/LXD": 4,
-            "rainbird-ESP/LXIVM": 16,
-        }
-
-        controller_type = st.selectbox(
-            "Number of Controller's Simultaneous Valves",
-            list(controller_type2simvalves.keys()),
-        )
-        controller_type = controller_type2simvalves[controller_type]
 
         checkbox_columns = st.columns(7)
 
@@ -154,16 +68,8 @@ if st.session_state.get("authentication_status", False):
             c3_1, c3_2 = st.columns([1, 1])
             with c3_2:
                 submitted = st.form_submit_button("Calculate")
-
+            
         if submitted:
-
-            ## *
-            batch_runtime = {}
-            for k in valve_type_keys:
-                print(f"\n## -> {st.session_state[f'runtimes_{k}']} \n")
-                batch_runtime[k] = float(st.session_state[f'runtimes_{k}'])
-
-
 
             # * Make Summary pannel
             placeholder_cols = st.columns(4)
@@ -171,32 +77,28 @@ if st.session_state.get("authentication_status", False):
             pump_type_placeholder = placeholder_cols[1].empty()
             avg_batch_gpm = placeholder_cols[2].empty()
             dummy = placeholder_cols[3].empty()
-
+            
             st.divider()
 
             plot_placeholder = st.empty()
             st.divider()
-
+            
             if len(data_frames) > 0:
                 for x in data_frames:
                     del x
                 data_frames = []
 
             if project_title is None:
-                st.toast("Please enter a valid project title!", icon="⚠️")
-            elif uploaded_file is None and data is None:
-                st.toast("Please enter a valid file {text/excel}", icon="⚠️")
+                st.warning("Please enter a valid project title!")
+            elif uploaded_file is None:
+                st.warning("Please enter a valid file {text/excel}")
             elif pump_unit_estimated_gpm is None:
-                st.toast("Please enter a valid Pump GPM", icon="⚠️")
-            elif acceptable_state(
-                project_title, pump_unit_estimated_gpm, valve_type_keys
-            ):
+                st.warning("Please enter a valid Pump GPM")
+            elif project_title is not None and uploaded_file is not None and pump_unit_estimated_gpm is not None:
 
-                # data = ut.read_datafile_as_dataframe(uploaded_file)
+                data = ut.read_datafile_as_dataframe(uploaded_file)
                 print("Got data")
-                pump_type, pump_type_name = ut.get_pump_type(
-                    data, pump_unit_estimated_gpm
-                )
+                pump_type, pump_type_name = ut.get_pump_type(data, pump_unit_estimated_gpm)
                 # per_pump_gpm = pump_unit_estimated_gpm / pump_type
                 valve_type_keys = data.valve_type_key.unique().tolist()
                 print("finding best schedule")
@@ -207,8 +109,6 @@ if st.session_state.get("authentication_status", False):
                     allow_exact,
                     allow_oversampling,
                     allow_undersampling,
-                    controller_type,
-                    batch_runtime
                 )
                 print("got solution")
 
@@ -219,24 +119,18 @@ if st.session_state.get("authentication_status", False):
 
                 batch_values = []
 
+
                 for newtork in solution[0]:
 
-                    key, controller_cell_spans, network_header, newtork_solution = (
-                        newtork
-                    )
+                    key, controller_cell_spans, network_header, newtork_solution = newtork
 
                     builder = GridOptionsBuilder.from_dataframe(newtork_solution)
 
                     ##* prepare column span values:
                     controller_cell_spans_string = ",".join(
-                        [
-                            f"'{k_}':{str(v_)}"
-                            for k_, v_ in controller_cell_spans.items()
-                        ]
+                        [f"'{k_}':{str(v_)}" for k_, v_ in controller_cell_spans.items()]
                     )
-                    controller_cell_spans_string = (
-                        "{" + controller_cell_spans_string + " }"
-                    )
+                    controller_cell_spans_string = "{" + controller_cell_spans_string + " }"
 
                     for key in newtork_solution.columns:
 
@@ -244,7 +138,7 @@ if st.session_state.get("authentication_status", False):
                             "field": key,
                             "minWidth": 5,
                         }
-                        if key in ["A", "B", "C", "D"]:
+                        if key in ["A", "B", "C"]:
                             configs["pinned"] = "left"
                             configs["width"] = 110
                             configs["wrapText"] = True
@@ -291,13 +185,6 @@ if st.session_state.get("authentication_status", False):
                             configs["cellStyle"] = {
                                 "color": "black",
                                 "background-color": "#1aa7ec",
-                            }
-
-                        elif key == "D":
-
-                            configs["cellStyle"] = {
-                                "color": "black",
-                                "background-color": "#fc8eac",
                             }
 
                         else:
@@ -359,43 +246,32 @@ if st.session_state.get("authentication_status", False):
                         newtork_solution, gridOptions=go, allow_unsafe_jscode=True
                     )
                     new_df = grid_return["data"]
-                    data_frames.append(
-                        (network_header, controller_cell_spans, newtork_solution)
-                    )
+                    data_frames.append((network_header,controller_cell_spans, newtork_solution))
                     st.divider()
 
-                    for x in newtork_solution["C"].tolist()[1:]:
-
+                    for x in newtork_solution['C'].tolist()[1:]:
+                    
                         try:
                             x = float(x.strip())
-                            batch_values.append(
-                                (
-                                    x,
-                                    network_header.split(",")[0]
-                                    .replace("Network", " ")
-                                    .strip(),
-                                )
-                            )
-
+                            batch_values.append((x, network_header.split(",")[0].replace("Network", " ").strip()))
+                
                         except:
                             pass
 
-                df = pd.DataFrame.from_records(
-                    batch_values, columns=["Batch GPM", "Network"]
-                )
-                fig = px.scatter(df, y=df["Batch GPM"], color="Network")
-                fig.update_traces(marker={"size": 15})
-                for i in range(1, pump_type + 1):
 
-                    hline_val = pump_unit_estimated_gpm / pump_type * i
+                df = pd.DataFrame.from_records(batch_values, columns=["Batch GPM", "Network"])
+                fig = px.scatter(df, y=df['Batch GPM'], color="Network"  )
+                fig.update_traces(marker={'size': 15})
+                for i in range(1, pump_type+1):
+
+                    hline_val = pump_unit_estimated_gpm/pump_type*i
                     fig.add_hline(y=hline_val, line_dash="dash", line_color="grey")
-                plot_placeholder.plotly_chart(
-                    fig, theme="streamlit", use_container_width=True
-                )
-
+                plot_placeholder.plotly_chart(fig, theme="streamlit", use_container_width=True)
+    
     if len(data_frames) > 0:
 
-        csv = pd.concat([df[-1] for df in data_frames])
+        
+        csv = pd.concat([ df[-1] for df in data_frames])
         ste.download_button(
             label="Export groups data as Excel",
             data=ut.to_excel(csv),
@@ -403,12 +279,10 @@ if st.session_state.get("authentication_status", False):
             mime="application/vnd.ms-excel",
         )
 
-        st.button(
-            "Save Project",
-            on_click=save_projects,
-            args=(data_frames, project_title, pump_unit_estimated_gpm, pump_type),
-        )
+        st.button("Save Project", on_click=save_projects, args=(data_frames, project_title, pump_unit_estimated_gpm, pump_type))
 
 
 else:
     st.switch_page("🏠_Home.py")
+
+
