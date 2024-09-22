@@ -260,6 +260,7 @@ if st.session_state.get("authentication_status", False):
 
 
                 df = pd.DataFrame.from_records(batch_values, columns=["Batch GPM", "Network"])
+                
                 fig = px.scatter(df, y=df['Batch GPM'], color="Network"  )
                 fig.update_traces(marker={'size': 15})
                 for i in range(1, pump_type+1):

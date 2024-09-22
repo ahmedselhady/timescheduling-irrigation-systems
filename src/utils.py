@@ -62,6 +62,21 @@ class Utils:
         return data  
 
     @classmethod
+    def read_datafile_as_dataframe_from_path(cls, file_path):
+        file_type = file_path.split(".")[-1]
+        file_type = file_path.split(".")[-1]
+        if file_type == "xlsx":
+            data = read_excel(file_path, header=0)
+            data = data.rename(columns={"GPM": "gpm"})
+        elif file_type == "txt":
+            data = read_csv(file_path, sep="\t")
+            data = data.rename(columns={"AA": "Valve", "20": "gpm"})
+        else:
+            data = None
+
+        return data  
+    
+    @classmethod
     def to_excel(cls, df:DataFrame) -> bytes:
         output = io.BytesIO()
         writer = ExcelWriter(output, engine="xlsxwriter")
