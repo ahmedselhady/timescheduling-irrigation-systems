@@ -17,18 +17,11 @@ class User(BaseModel):
     password: str
     first_name: str
     last_name: str
-    date_of_birth: date
 
     @validator("password")
     def password_must_be_at_least_8_chars(cls, value):
         if len(value) < 8:
             raise ValueError("Password must be at least 8 characters long")
-        return value
-
-    @validator("date_of_birth")
-    def date_of_birth_must_be_in_the_past(cls, value):
-        if value >= date.today():
-            raise ValueError("Date of birth must be in the past")
         return value
 
 
@@ -47,7 +40,6 @@ def signup(user: User, db: Session = Depends(get_db)):
         password=hash_password(user.password),
         first_name=user.first_name,
         last_name=user.last_name,
-        date_of_birth=user.date_of_birth,
     )
     db.add(new_user)
     db.commit()

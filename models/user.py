@@ -10,4 +10,3 @@ class UserDB(Base):
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     password = Column(String, nullable=False)
-    date_of_birth = Column(Date, nullable=False)
