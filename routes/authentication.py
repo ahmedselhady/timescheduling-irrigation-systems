@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr, validator
 from datetime import date
 
-from utils.database import get_db_session, BaseDbEntity
+from utils.database import get_db_session, base_db_entity
 from models.user import UserDB
 from utils.hashing import hash_password, verify_password
 from utils.token_generator import create_access_token

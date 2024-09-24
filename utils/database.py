@@ -9,15 +9,15 @@ DATABASE_URL = "sqlite:///./irrigation.db"
 db_engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 
 # Create a base class for ORM models
-BaseDbEntity = declarative_base()
+base_db_entity = declarative_base()
 
 # Create a session local class for database access
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=db_engine)
+local_session = sessionmaker(autocommit=False, autoflush=False, bind=db_engine)
 
 
 # Dependency for database session
 def get_db_session():
-    db = SessionLocal()
+    db = local_session()
     try:
         yield db
     finally:
