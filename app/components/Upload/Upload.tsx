@@ -14,7 +14,8 @@ import {
 } from "@mui/material";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import { useAppContext } from "@/context";
-import data from "../../../examples.json";
+
+import newData from "../../../new-example.json";
 
 const Upload = () => {
   const { toggleShowResults, handleSaveData } = useAppContext();
@@ -35,11 +36,11 @@ const Upload = () => {
   const handleFileUpload = async (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
-    if (pumpUnitValue === "" || uploadedFile === null) {
-      alert("please enter value or uplaod a file");
-      return;
-    }
-    handleSaveData(data.types);
+    // if (pumpUnitValue === "" || uploadedFile === null) {
+    //   alert("please enter value or uplaod a file");
+    //   return;
+    // }
+    handleSaveData(newData);
     toggleShowResults();
 
     // const formData = new FormData();

@@ -8,6 +8,7 @@ import { useAppContext } from "@/context";
 import Upload from "@/components/Upload/Upload";
 import Groups from "@/components/Groups/Groups";
 import Table from "@/components/Groups/Table";
+import { Batch } from "@/type";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",

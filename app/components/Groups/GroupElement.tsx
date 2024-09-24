@@ -1,170 +1,126 @@
+"use client";
+
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { Group } from "@/type";
-import { styled } from "@mui/material/styles";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  "&:last-child td, &:last-child th": {
-    border: 0,
-  },
-}));
-
-interface GroupElementProps {
-  id: string;
-  totalGpm: string | number;
-  numberOfValves: number;
-  groups: Group[];
+function createData(
+  name: string,
+  calories: number,
+  fat: number,
+  carbs: number,
+  protein: number,
+  price: number
+) {
+  return {
+    name,
+    calories,
+    fat,
+    carbs,
+    protein,
+    price,
+    history: [
+      {
+        date: "2020-01-05",
+        customerId: "11091700",
+        amount: 3,
+      },
+      {
+        date: "2020-01-02",
+        customerId: "Anonymous",
+        amount: 1,
+      },
+    ],
+  };
 }
 
-const GroupElement = ({
-  id,
-  totalGpm,
-  numberOfValves,
-  groups,
-}: GroupElementProps) => {
-  const [openId, setOpenId] = React.useState<string | null>(null);
-  const [insideOpenId, setInsideOpenId] = React.useState<string | null>(null);
-
-  const handleClick = (groupId: string) => {
-    if (openId === groupId) {
-      setOpenId(null);
-    } else {
-      setOpenId(groupId);
-    }
-  };
-
-  const handleInnerClick = (groupId: string, historyId: string) => {
-    if (insideOpenId === historyId) {
-      setInsideOpenId(null);
-    } else {
-      setInsideOpenId(historyId);
-    }
-  };
+function Row(props: { row: ReturnType<typeof createData> }) {
+  const { row } = props;
+  const [open, setOpen] = React.useState(false);
 
   return (
     <React.Fragment>
-      <TableRow>
+      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <TableCell>
           <IconButton
             aria-label="expand row"
             size="small"
-            onClick={() => handleClick(id)}
+            onClick={() => setOpen(!open)}
           >
-            {openId === id ? (
-              <KeyboardArrowUpIcon />
-            ) : (
-              <KeyboardArrowDownIcon />
-            )}
+            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">
-          {id}
+          {row.name}
         </TableCell>
-        <TableCell align="right">{totalGpm}</TableCell>
-        <TableCell align="right">{numberOfValves}</TableCell>
+        <TableCell align="right">{row.calories}</TableCell>
+        <TableCell align="right">{row.fat}</TableCell>
+        <TableCell align="right">{row.carbs}</TableCell>
+        <TableCell align="right">{row.protein}</TableCell>
       </TableRow>
-      {groups.map((rowItem) => (
-        <StyledTableRow
-          sx={{
-            "& > *": { borderBottom: "unset" },
-            bgcolor: insideOpenId === rowItem.id ? "#E3EEFA" : "inherit",
-          }}
-        >
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-            <Collapse in={openId === id} timeout="auto" unmountOnExit>
-              {/*  */}
-
-              <TableRow
-                sx={{
-                  "& > *": { borderBottom: "unset" },
-                }}
-              >
-                <TableCell>
-                  <IconButton
-                    aria-label="expand row"
-                    size="small"
-                    onClick={() => handleInnerClick(id, rowItem.id)}
-                  >
-                    {insideOpenId === rowItem.id ? (
-                      <KeyboardArrowUpIcon />
-                    ) : (
-                      <KeyboardArrowDownIcon />
-                    )}
-                  </IconButton>
-                </TableCell>
-                <TableCell component="th" scope="row">
-                  Group ID: {rowItem.id}
-                </TableCell>
-                <TableCell align="right">
-                  Group Total GPM: {rowItem.total_gpm}
-                </TableCell>
-                <TableCell align="right">
-                  Pump Works: {rowItem.pump_works}
-                </TableCell>
-                <TableCell align="right">
-                  Number of Valves: {rowItem.valves_number}
-                </TableCell>
-              </TableRow>
-              <Collapse
-                in={insideOpenId === rowItem.id}
-                timeout="auto"
-                unmountOnExit
-              >
-                <Box
-                  sx={{
-                    margin: 1,
-                  }}
-                >
-                  <Table size="medium" aria-label="purchases">
-                    <TableBody className="flex max-w-[57rem] overflow-x-scroll">
-                      {rowItem.valves.map((valveItem) => (
-                        <TableRow
-                          key={valveItem.id}
-                          hover
-                          className="flex flex-col"
-                        >
-                          <TableCell className="whitespace-nowrap">
-                            {valveItem.id}
-                          </TableCell>
-                          <TableCell className="">{valveItem.gpm}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </Box>
-              </Collapse>
-
-              {/*  */}
-            </Collapse>
-          </TableCell>
-        </StyledTableRow>
-      ))}
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <Box sx={{ margin: 1 }}>
+              <Typography variant="h6" gutterBottom component="div">
+                History
+              </Typography>
+              <Table size="small" aria-label="purchases">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Date</TableCell>
+                    <TableCell>Customer</TableCell>
+                    <TableCell align="right">Amount</TableCell>
+                    <TableCell align="right">Total price ($)</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {row.history.map((historyRow) => (
+                    <TableRow key={historyRow.date}>
+                      <TableCell component="th" scope="row">
+                        {historyRow.date}
+                      </TableCell>
+                      <TableCell>{historyRow.customerId}</TableCell>
+                      <TableCell align="right">{historyRow.amount}</TableCell>
+                      <TableCell align="right">
+                        {Math.round(historyRow.amount * row.price * 100) / 100}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
     </React.Fragment>
   );
-};
+}
+const rows = [
+  createData("Frozen yoghurt", 159, 6.0, 24, 4.0, 3.99),
+  createData("Ice cream sandwich", 237, 9.0, 37, 4.3, 4.99),
+  createData("Eclair", 262, 16.0, 24, 6.0, 3.79),
+  createData("Cupcake", 305, 3.7, 67, 4.3, 2.5),
+  createData("Gingerbread", 356, 16.0, 49, 3.9, 1.5),
+];
 
-export default GroupElement;
+export default function GroupElement() {
+  return (
+    <TableBody>
+      {rows.map((row) => (
+        <Row key={row.name} row={row} />
+      ))}
+    </TableBody>
+  );
+}
