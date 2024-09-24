@@ -1,9 +1,9 @@
 from sqlalchemy import Column, Integer, String, Date
-from utils.database import Base
+from utils.database import BaseDbEntity
 
 
 # Example: Define a User table model
-class UserDB(Base):
+class UserDB(BaseDbEntity):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
