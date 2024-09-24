@@ -2,13 +2,10 @@ from fastapi import APIRouter, Depends, UploadFile, HTTPException, Form, File
 from pydantic import BaseModel, conint, validator
 from models.algorithm import irregation_scheduling_algorithm
 import os
-
+import tempfile
 
 router = APIRouter()
 
-
-UPLOAD_FOLDER = "uploads"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 class Schedule(BaseModel):
     upload_file: UploadFile  # Keep it here for validation
@@ -45,22 +42,26 @@ async def schedule(
             allow_undersampling=allow_undersampling,
         )
 
+        # Use tempfile to create a temporary file
+        with tempfile.NamedTemporaryFile(
+            delete=False, suffix=os.path.splitext(upload_file.filename)[1]
+        ) as temp_file:
+            # Write the uploaded file content to the temporary file
+            temp_file.write(await upload_file.read())
+            temp_file.flush()  # Ensure all data is written
+            temp_file_path = temp_file.name
 
-        # Save the file
-        file_extension = os.path.splitext(upload_file.filename)[1]
-        file_name = f"upload_file{file_extension}"
-        file_path = os.path.join(UPLOAD_FOLDER, file_name)
-
-        with open(file_path, "wb") as f:
-            f.write(await upload_file.read())
-
+        # Pass the temporary file path to the algorithm
         response = irregation_scheduling_algorithm(
-            uploaded_file=file_path,
+            uploaded_file=temp_file_path,
             pump_unit_estimated_gpm=pump_unit_estimated_gpm,
             allow_exact=allow_exact,
             allow_oversampling=allow_oversampling,
             allow_undersampling=allow_undersampling,
         )
+
+        # Clean up the temporary file manually
+        os.remove(temp_file_path)
 
         return response
 
