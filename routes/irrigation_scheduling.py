@@ -7,6 +7,9 @@ import os
 router = APIRouter()
 
 
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 class Schedule(BaseModel):
     upload_file: UploadFile  # Keep it here for validation
     pump_unit_estimated_gpm: conint(gt=0)
@@ -42,8 +45,6 @@ async def schedule(
             allow_undersampling=allow_undersampling,
         )
 
-        UPLOAD_FOLDER = "uploads"
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
         # Save the file
         file_extension = os.path.splitext(upload_file.filename)[1]
