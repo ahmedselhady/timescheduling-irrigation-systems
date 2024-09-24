@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr, validator
 from datetime import date
 
-from utils.database import get_db, BaseDbEntity
+from utils.database import get_db_session, BaseDbEntity
 from models.user import UserDB
 from utils.hashing import hash_password, verify_password
 from utils.token_generator import create_access_token
@@ -27,7 +27,7 @@ class User(BaseModel):
 
 # sign-up route
 @router.post("/signup")
-def signup(user: User, db: Session = Depends(get_db)):
+def signup(user: User, db: Session = Depends(get_db_session)):
     # Check if email is already registered
     existing_user = db.query(UserDB).filter(UserDB.email == user.email).first()
     if existing_user:
@@ -55,7 +55,7 @@ class LoginRequest(BaseModel):
 
 # Login route
 @router.post("/login")
-def login(login_data: LoginRequest, db: Session = Depends(get_db)):
+def login(login_data: LoginRequest, db: Session = Depends(get_db_session)):
     # Retrieve user from database
     user = db.query(UserDB).filter(UserDB.email == login_data.email).first()
     # if not user or password != user.password:
