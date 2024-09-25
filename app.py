@@ -1,7 +1,3 @@
-# import sys
-
-# sys.path.append("d:\irrigation-project\.venv\lib\site-packages")
-
 from fastapi import FastAPI
 from utils.database import base_db_entity, db_engine
 from routes.authentication import router as authentication_router
