@@ -1,12 +1,8 @@
-<<<<<<< HEAD
-.venv
-__pycache__
-irrigation.db
-temp_data
-=======
 # customs
 *scratchpad.ipynb
 **.DS_store
+irrigation.db
+temp_data
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -29,6 +25,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+.venv
 
 # Installer logs
 pip-log.txt
@@ -58,4 +55,3 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
->>>>>>> main
