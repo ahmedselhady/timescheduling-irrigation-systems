@@ -15,7 +15,6 @@ def irregation_scheduling_algorithm(
     data = fp.read_datafile_as_dataframe_from_path(uploaded_file)
     print("Got data")
     pump_type, pump_type_name = fp.get_pump_type(data, pump_unit_estimated_gpm)
-    valve_type_keys = data.valve_type_key.unique().tolist()
     print("finding best schedule")
     solution = tsa.find_best_scheduling(
         data,
@@ -53,7 +52,7 @@ def irregation_scheduling_algorithm(
         )
 
     response_dict = {
-        "pump_type": pump_type,
+        "pump_type": pump_type_name,
         "total_num_batches": total_num_batches,
         "batch_data": batch_data,
     }
