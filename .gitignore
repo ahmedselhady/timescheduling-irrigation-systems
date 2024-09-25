@@ -1,9 +1,7 @@
-<<<<<<< HEAD
 .venv
 __pycache__
 irrigation.db
 temp_data
-=======
 # customs
 *scratchpad.ipynb
 **.DS_store
@@ -58,4 +56,3 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
->>>>>>> main
