@@ -20,14 +20,12 @@ export type GroupCategory = {
 
 // for the new response
 
-export interface ValveData {
-  [key: string]: [string, number][][];
-}
+interface ControllerValves {}
 
 export interface Batch {
   batch_id: number;
   batch_total_gpm: number;
-  controller_valves: ValveData;
+  controller_valves: ControllerValves;
 }
 
 export interface NetworkData {

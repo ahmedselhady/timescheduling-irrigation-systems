@@ -12,7 +12,8 @@ interface AppContextType {
   toggleShowResults: () => void;
   handleSaveData: (payload: ResponseData) => void;
   groups: ResponseData | null;
-  arrangeControllersByBatch: (batch: Batch) => void;
+  pumpUnitValue: string | number;
+  pumpUnitValueInputHandler: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -21,16 +22,9 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
   // Layout
 
   const [drawerIsOpened, setDrawerIsOpen] = React.useState(false);
-  const [groups, setGroups] = React.useState<ResponseData | null>(newData);
+  const [groups, setGroups] = React.useState<ResponseData | null>(null);
   const [showResult, setShowGroups] = React.useState<boolean>(false);
-
-  const [controller, setController] = React.useState();
-
-  // batch_id: number;
-  // batch_total_gpm: number;
-  // controller_valves: ValveData;
-
-  const arrangeControllersByBatch = (batch: Batch) => {};
+  const [pumpUnitValue, setPumpUnitValue] = React.useState<number | string>("");
 
   const handleSaveData = (payload: ResponseData) => {
     setGroups(payload);
@@ -44,6 +38,12 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
     setShowGroups((preState) => !preState);
   };
 
+  const pumpUnitValueInputHandler = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setPumpUnitValue(e.target.value);
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -53,7 +53,8 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
         toggleShowResults,
         handleSaveData,
         groups,
-        arrangeControllersByBatch,
+        pumpUnitValue,
+        pumpUnitValueInputHandler,
       }}
     >
       {children}

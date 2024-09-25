@@ -13,12 +13,12 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import { useAppContext } from "@/context";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import ListIcon from "@mui/icons-material/List";
 
 import { drawerWidth } from "@/constants";
+import Link from "next/link";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -51,7 +51,7 @@ const DrawerEle = () => {
       anchor="left"
       open={drawerIsOpened}
     >
-      <DrawerHeader>
+      <DrawerHeader className="flex content-between">
         <IconButton onClick={handleDrawerToggle}>
           {theme.direction === "ltr" ? (
             <ChevronLeftIcon />
@@ -62,16 +62,16 @@ const DrawerEle = () => {
       </DrawerHeader>
       <Divider />
       <List>
-        {["App"].map((text, index) => (
-          <ListItem key={text} disablePadding>
+        <Link href="/" onClick={handleDrawerToggle}>
+          <ListItem disablePadding>
             <ListItemButton>
               <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                <InboxIcon />
               </ListItemIcon>
-              <ListItemText primary={text} />
+              <ListItemText primary="App" />
             </ListItemButton>
           </ListItem>
-        ))}
+        </Link>
       </List>
       <Divider />
       <List>

@@ -6,6 +6,7 @@ import { AppWrapper } from "@/context";
 import Header from "@/components/Header/Header";
 import DrawerEle from "@/components/Drawer/Drawer";
 import { CssBaseline } from "@mui/material";
+import { Main, DrawerHeader } from "@/components/Main/Main";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -37,7 +38,10 @@ export default function RootLayout({
         <AppWrapper>
           <Header />
           <DrawerEle />
-          {children}
+          <Main className="flex items-center justify-center w-full mx-auto mt-14">
+            <DrawerHeader />
+            {children}
+          </Main>
         </AppWrapper>
       </body>
     </html>

@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 
 import {
@@ -9,20 +11,47 @@ import {
   FormControl,
   Input,
   InputLabel,
+  FormGroup,
+  FormControlLabel,
   TextField,
   Typography,
 } from "@mui/material";
+import Checkbox from "@mui/material/Checkbox";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import { useAppContext } from "@/context";
-
+import { useRouter } from "next/navigation";
 import newData from "../../../new-example.json";
 
-const Upload = () => {
-  const { toggleShowResults, handleSaveData } = useAppContext();
+interface CheckboxState {
+  acceptLower: boolean;
+  acceptExact: boolean;
+  acceptHigher: boolean;
+}
 
-  const [pumpUnitValue, setPumpUnitValue] = React.useState<number | string>("");
+const Upload = () => {
+  const router = useRouter();
+  const {
+    toggleShowResults,
+    handleSaveData,
+    pumpUnitValue,
+    pumpUnitValueInputHandler,
+  } = useAppContext();
+
   const [uploadedFile, setUploadedFile] = React.useState<File | null>(null);
   const [fileFormat, setFileFormat] = React.useState<string>("");
+
+  const [checkboxes, setCheckboxes] = React.useState<CheckboxState>({
+    acceptLower: false,
+    acceptExact: true,
+    acceptHigher: false,
+  });
+
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCheckboxes({
+      ...checkboxes,
+      [event.target.name]: event.target.checked,
+    });
+  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files ? event.target.files[0] : null;
@@ -36,12 +65,13 @@ const Upload = () => {
   const handleFileUpload = async (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
-    // if (pumpUnitValue === "" || uploadedFile === null) {
-    //   alert("please enter value or uplaod a file");
-    //   return;
-    // }
+    if (pumpUnitValue === "" || uploadedFile === null) {
+      alert("please enter value or uplaod a file");
+      return;
+    }
     handleSaveData(newData);
     toggleShowResults();
+    router.push("/results");
 
     // const formData = new FormData();
     // if (uploadedFile === null) {
@@ -76,7 +106,7 @@ const Upload = () => {
   return (
     <Card
       sx={{
-        width: { xs: "100%", sm: "33.75rem" },
+        width: { xs: "100%", sm: "45rem" },
         padding: { xs: "2rem 0", sm: "2rem 3rem" },
       }}
     >
@@ -121,7 +151,7 @@ const Upload = () => {
             required
             type="number"
             value={pumpUnitValue}
-            onChange={(e) => setPumpUnitValue(e.target.value)}
+            onChange={(e: any) => pumpUnitValueInputHandler(e)}
             className="w-full"
             id="outlined-basic"
             label="Pump Unit Estimated GPM"
@@ -129,7 +159,39 @@ const Upload = () => {
           />
         </FormControl>
       </CardContent>
-      <CardActions className="flex justify-center">
+      <CardActions className="flex flex-col justify-center">
+        <div className="flex justify-between py-7">
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="acceptLower"
+                checked={checkboxes.acceptLower}
+                onChange={handleCheckboxChange}
+              />
+            }
+            label="Accept 10% lower"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="acceptExact"
+                checked={checkboxes.acceptExact}
+                onChange={handleCheckboxChange}
+              />
+            }
+            label="Accept exact GPM"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="acceptHigher"
+                checked={checkboxes.acceptHigher}
+                onChange={handleCheckboxChange}
+              />
+            }
+            label="Accept 10% higher"
+          />
+        </div>
         <Button
           type="submit"
           onClick={handleFileUpload}
