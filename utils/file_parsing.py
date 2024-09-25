@@ -3,7 +3,7 @@ from pandas import DataFrame, read_csv, read_excel, ExcelWriter
 from math import ceil
 import io
 
-class Utils:
+class File_parsing:
 
     def __init__(self) -> None:
         pass

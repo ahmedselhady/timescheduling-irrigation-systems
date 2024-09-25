@@ -1,16 +1,7 @@
-from utils import Utils as ut
-from model.time_scheduling import TimeSchedulingAlgorithm as tsa
+from utils.file_parsing import File_parsing as fp
+from models.time_scheduling import TimeSchedulingAlgorithm as tsa
 from pprint import pprint
-from constants import network_type_map
-import json
-
-"""
-uploaded_file = "/home/ahmed/work/Freelance/Ammo Assem/timescheduling-irrigation-systems/data/New/NOTATION.txt"
-pump_unit_estimated_gpm = 1305
-allow_exact = True
-allow_oversampling = False
-allow_undersampling = False
-"""
+from utils.constants import network_type_map
 
 
 def irregation_scheduling_algorithm(
@@ -21,10 +12,9 @@ def irregation_scheduling_algorithm(
     allow_undersampling=False,
 ):
 
-    data = ut.read_datafile_as_dataframe_from_path(uploaded_file)
+    data = fp.read_datafile_as_dataframe_from_path(uploaded_file)
     print("Got data")
-    pump_type, pump_type_name = ut.get_pump_type(data, pump_unit_estimated_gpm)
-    valve_type_keys = data.valve_type_key.unique().tolist()
+    pump_type, pump_type_name = fp.get_pump_type(data, pump_unit_estimated_gpm)
     print("finding best schedule")
     solution = tsa.find_best_scheduling(
         data,
@@ -62,7 +52,7 @@ def irregation_scheduling_algorithm(
         )
 
     response_dict = {
-        "pump_type": pump_type,
+        "pump_type": pump_type_name,
         "total_num_batches": total_num_batches,
         "batch_data": batch_data,
     }

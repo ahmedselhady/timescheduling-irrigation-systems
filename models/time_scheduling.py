@@ -1,10 +1,10 @@
 from tqdm import tqdm
 from copy import copy
-from model.knapsac import knapsack, knapsack_with_tolerance
+from models.knapsac import knapsack, knapsack_with_tolerance
 from pandas import DataFrame
 from itertools import chain
-from utils import Utils as ut
-from constants import network_type_map
+from utils.constants import network_type_map
+
 
 
 class TimeSchedulingAlgorithm:
