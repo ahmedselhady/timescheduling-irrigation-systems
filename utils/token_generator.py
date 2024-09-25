@@ -1,9 +1,11 @@
 import jwt
+import yaml
 from datetime import datetime, timedelta
 
 # Secret key for encoding and decoding JWTs
-SECRET_KEY = "your_secret_key"  # Change this to a strong secret
-ALGORITHM = "HS256"
+with open("./utils/secrets.yaml", "r") as file:
+    config = yaml.safe_load(file)
+
 
 EXPIRATION_TIME = 2
 
@@ -14,4 +16,8 @@ def create_access_token(
     to_encode = data.copy()
     expire = datetime.utcnow() + expires_delta
     to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return jwt.encode(
+        to_encode,
+        config["security"]["SECRET_KEY"],
+        algorithm=config["security"]["ALGORITHM"],
+    )
