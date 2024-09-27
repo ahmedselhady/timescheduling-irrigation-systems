@@ -8,7 +8,7 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useAppContext } from "@/context";
 
-import logo from "@/assets/logo.jpeg";
+import logo from "@/assets/logo-Photoroom.png";
 
 import { drawerWidth } from "@/constants";
 import Image from "next/image";
@@ -59,7 +59,7 @@ const Header = () => {
           <MenuIcon />
         </IconButton>
         <div className={`relative py-2 ${drawerIsOpened ? "hidden" : "block"}`}>
-          <Image quality={100} width={100} height={100} src={logo} alt="logo" />
+          {/* <Image quality={100} width={100} height={100} src={logo} alt="logo" /> */}
         </div>
       </Toolbar>
     </AppBar>

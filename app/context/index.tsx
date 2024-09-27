@@ -2,8 +2,8 @@
 
 import React, { useContext, createContext } from "react";
 
-import { Batch, ResponseData } from "@/type";
-import newData from "../../new-example.json";
+import { ResponseData } from "@/type";
+import { useTheme, useMediaQuery } from "@material-ui/core";
 
 interface AppContextType {
   drawerIsOpened: boolean;
@@ -14,17 +14,29 @@ interface AppContextType {
   groups: ResponseData | null;
   pumpUnitValue: string | number;
   pumpUnitValueInputHandler: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  isSmScreen: boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppWrapper({ children }: { children: React.ReactNode }) {
   // Layout
+  const theme = useTheme();
+  const isMdScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const isSmScreen = useMediaQuery(theme.breakpoints.down("xs"));
 
-  const [drawerIsOpened, setDrawerIsOpen] = React.useState(false);
+  const [drawerIsOpened, setDrawerIsOpen] = React.useState(!isMdScreen);
   const [groups, setGroups] = React.useState<ResponseData | null>(null);
   const [showResult, setShowGroups] = React.useState<boolean>(false);
   const [pumpUnitValue, setPumpUnitValue] = React.useState<number | string>("");
+
+  React.useEffect(() => {
+    if (isMdScreen) {
+      setDrawerIsOpen(false);
+    } else if (!isMdScreen) {
+      setDrawerIsOpen(true);
+    }
+  }, [isMdScreen]);
 
   const handleSaveData = (payload: ResponseData) => {
     setGroups(payload);
@@ -55,6 +67,7 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
         groups,
         pumpUnitValue,
         pumpUnitValueInputHandler,
+        isSmScreen,
       }}
     >
       {children}

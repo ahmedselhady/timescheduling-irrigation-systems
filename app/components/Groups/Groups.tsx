@@ -13,6 +13,7 @@ import { useAppContext } from "@/context";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+import { redirect } from "next/navigation";
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
@@ -29,6 +30,12 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 const Groups = () => {
   const { groups, pumpUnitValue } = useAppContext();
+
+  React.useLayoutEffect(() => {
+    if (groups === null) {
+      redirect("/");
+    }
+  }, []);
 
   const countValvesForEachNetwork = () => {
     const networkValveCounts: any = {};
@@ -52,7 +59,7 @@ const Groups = () => {
   const networkValveCounts = countValvesForEachNetwork();
 
   return (
-    <div className="flex flex-col max-w-[95%] gap-8">
+    <div className="flex flex-col max-w-[95%] gap-8 my-4">
       <div className="flex items-center justify-center">
         <Card sx={{ width: "35rem" }}>
           <CardContent className="flex justify-between">
@@ -101,23 +108,8 @@ const Groups = () => {
       <div className="flex flex-col gap-24">
         {groups?.batch_data.map((item) => (
           <div className="flex flex-col gap-3">
-            {/* <div className="flex gap-8">
-              <h1 className="text-2xl font-semibold">{item.network},</h1>
-              <h1 className="text-2xl font-semibold">
-                Total GPM:{" "}
-                <span className="font-normal">
-                  {item.network_total_gpm.toFixed(3)}
-                </span>
-              </h1>
-              <h1 className="text-2xl font-semibold">
-                Number of valves:{" "}
-                <span className="font-normal">
-                  {networkValveCounts[item.network] ?? "N/A"}
-                </span>
-              </h1>
-            </div> */}
             <Card sx={{ width: "100%" }}>
-              <CardContent className="flex gap-36">
+              <CardContent className="flex flex-col sm:flex-row gap-4 sm:gap-36">
                 <div>
                   <Typography variant="h5" component="div">
                     <strong>{item.network}</strong>

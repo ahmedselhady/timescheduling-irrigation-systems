@@ -16,9 +16,11 @@ import InboxIcon from "@mui/icons-material/MoveToInbox";
 import { useAppContext } from "@/context";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import ListIcon from "@mui/icons-material/List";
+import Image from "next/image";
 
 import { drawerWidth } from "@/constants";
 import Link from "next/link";
+import logo from "@/assets/logo-Photoroom.png";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -35,9 +37,12 @@ const DrawerEle = () => {
 
   return (
     <Drawer
+      disableEnforceFocus
+      hideBackdrop
       ModalProps={{
         onBackdropClick: handleDrawerToggle,
         keepMounted: true,
+        disableScrollLock: true,
       }}
       sx={{
         width: drawerWidth,
@@ -51,7 +56,15 @@ const DrawerEle = () => {
       anchor="left"
       open={drawerIsOpened}
     >
-      <DrawerHeader className="flex content-between">
+      <DrawerHeader className="flex items-center justify-between">
+        <Image
+          quality={100}
+          src={logo}
+          height={100}
+          width={120}
+          alt="logo"
+          objectFit="cover"
+        />
         <IconButton onClick={handleDrawerToggle}>
           {theme.direction === "ltr" ? (
             <ChevronLeftIcon />
@@ -68,13 +81,13 @@ const DrawerEle = () => {
               <ListItemIcon>
                 <InboxIcon />
               </ListItemIcon>
-              <ListItemText primary="App" />
+              <ListItemText primary="New Schedule" />
             </ListItemButton>
           </ListItem>
         </Link>
       </List>
       <Divider />
-      <List>
+      {/* <List>
         {["New Project", "List Project"].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton>
@@ -85,7 +98,7 @@ const DrawerEle = () => {
             </ListItemButton>
           </ListItem>
         ))}
-      </List>
+      </List> */}
     </Drawer>
   );
 };

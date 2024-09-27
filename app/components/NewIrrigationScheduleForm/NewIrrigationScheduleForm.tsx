@@ -28,12 +28,13 @@ interface CheckboxState {
   acceptHigher: boolean;
 }
 
-const Upload = () => {
+const NewIrrigationScheduleForm = () => {
   const router = useRouter();
   const {
     toggleShowResults,
     handleSaveData,
     pumpUnitValue,
+    isSmScreen,
     pumpUnitValueInputHandler,
   } = useAppContext();
 
@@ -72,70 +73,43 @@ const Upload = () => {
     handleSaveData(newData);
     toggleShowResults();
     router.push("/results");
-
-    // const formData = new FormData();
-    // if (uploadedFile === null) {
-    //   alert("please enter a file");
-    //   return;
-    // }
-    // formData.append("file", uploadedFile);
-    // formData.append("pump_unit_estimated_gpm", String(pumpUnitValue));
-    // try {
-    //   const response = await fetch("http://127.0.0.1:5000/", {
-    //     method: "POST",
-    //     body: formData,
-    //   });
-    //   if (!response.ok) {
-    //     console.log("here");
-    //     throw new Error(`Error: ${response.statusText}`);
-    //   }
-    //   const result = await response.json();
-    //   console.log(result);
-    //   // Handle success however you prefer
-    //   if (result) {
-    //     toggleShowResults();
-    //   }
-    // } catch (error) {
-    //   if (error instanceof Error) {
-    //     console.error(error.message);
-    //     // Handle error however you prefer
-    //   }
-    // }
   };
 
   return (
     <Card
       sx={{
-        width: { xs: "100%", sm: "45rem" },
-        padding: { xs: "2rem 0", sm: "2rem 3rem" },
+        padding: { xs: "0", sm: "2rem 3rem" },
       }}
     >
-      <CardHeader title="Upload" sx={{ textAlign: "center" }}></CardHeader>
+      <CardHeader
+        title="New Irrigation Schedule"
+        sx={{ textAlign: "center" }}
+      ></CardHeader>
       <CardContent>
         <FormControl className="flex justify-center gap-8">
           <Input
             onChange={handleFileChange}
             type="file"
-            className="custom-file-upload border-2 border-dashed bg-[#F8F8FF] h-[14.625rem] w-full"
+            className="custom-file-upload border-2 border-dashed bg-[#F8F8FF] h-[9rem] sm:h-[14.625rem] w-full"
             inputProps={{ style: { height: "100%" } }}
             sx={{ borderColor: "primary.main" }}
             disableUnderline
           />
           <InputLabel
-            className="flex flex-col items-center justify-center w-full"
             shrink={false}
+            className="flex flex-col items-center justify-center w-full p-3 sm:p-0"
           >
             <DriveFolderUploadIcon
-              sx={{ fontSize: "6rem", color: "#483EA8" }}
+              sx={{ fontSize: { sm: "6rem", xs: "3rem" }, color: "#483EA8" }}
             />
             <Typography
               variant="h5"
               sx={{
                 color: "#0F0F0F",
                 fontWeight: "700",
-                fontSize: "1rem",
+                fontSize: { sm: "1rem", xs: "0.75rem" },
               }}
-              className="pt-7"
+              className="pt-3 sm:pt-7"
             >
               Drag & drop files or
               <span className="text-[#483EA8] underline"> Browse</span>
@@ -159,8 +133,8 @@ const Upload = () => {
           />
         </FormControl>
       </CardContent>
-      <CardActions className="flex flex-col justify-center">
-        <div className="flex justify-between py-7">
+      <CardActions className="flex flex-col justify-center items-center">
+        <div className="w-full flex flex-col sm:flex-row justify-between items-start pl-3 sm:pl-0 py-3 sm:py-7">
           <FormControlLabel
             control={
               <Checkbox
@@ -192,17 +166,19 @@ const Upload = () => {
             label="Accept 10% higher"
           />
         </div>
-        <Button
-          type="submit"
-          onClick={handleFileUpload}
-          sx={{ background: "#483EA8", width: "100%" }}
-          variant="contained"
-        >
-          Calculate
-        </Button>
+        <div className="w-full flex items-center justify-center my-4">
+          <Button
+            type="submit"
+            onClick={handleFileUpload}
+            sx={{ background: "#483EA8", width: "100%", padding: "0.75rem" }}
+            variant="contained"
+          >
+            Calculate
+          </Button>
+        </div>
       </CardActions>
     </Card>
   );
 };
 
-export default Upload;
+export default NewIrrigationScheduleForm;

@@ -1,7 +1,7 @@
 import React from "react";
 
-import Upload from "@/components/Upload/Upload";
+import NewIrrigationScheduleForm from "@/components/NewIrrigationScheduleForm/NewIrrigationScheduleForm";
 
-export default function Home() {
-  return <Upload />;
+export default function NewSchedule() {
+  return <NewIrrigationScheduleForm />;
 }
