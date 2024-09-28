@@ -65,14 +65,36 @@ const NewIrrigationScheduleForm = () => {
   const handleFileUpload = async (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
+    event.preventDefault();
     if (pumpUnitValue === "" || uploadedFile === null) {
       setIsError(true);
       return;
     }
     setIsLoading(true);
     try {
-      handleSaveData(newData);
+      const formData = new FormData();
+      formData.append("upload_file", uploadedFile);
+      formData.append("pump_unit_estimated_gpm", pumpUnitValue.toString());
+      formData.append("allow_exact", "true");
+      formData.append("allow_oversampling", "False");
+      formData.append("allow_undersampling", "False");
+
+      const response = await fetch("http://62.84.182.54/schedule", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const result = await response.json();
+      handleSaveData(result);
+      setIsLoading(false);
     } catch (err) {
+      setIsError(true);
+      setIsLoading(false);
+      console.error("There was an error uploading the file: ", err);
     } finally {
       router.push("/results");
     }

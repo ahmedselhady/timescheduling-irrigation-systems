@@ -83,13 +83,7 @@ const Groups = () => {
                 Pump Type
               </Typography>
               <Typography variant="h5" component="div">
-                {groups?.pump_type === 3
-                  ? "Triplet"
-                  : groups?.pump_type === 2
-                  ? "Double"
-                  : groups?.pump_type === 1
-                  ? "Single"
-                  : "X"}
+                {groups?.pump_type}
               </Typography>
             </div>
             <div>
