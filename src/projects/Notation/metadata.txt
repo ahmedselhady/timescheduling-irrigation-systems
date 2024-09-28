@@ -1,8 +1,0 @@
-Notation
-19/02/2024 15:42:12###1150.0###2
-Drip Network.csv###Drip Network,    Total GPM = 15133.150,	Number of valves = 447
-Drip Network.csv###{'B': 18, 'A': 11, 'E': 13, 'D': 12, 'C': 16}
-Bubbler Network.csv###Bubbler Network,    Total GPM = 3713.750,	Number of valves = 162
-Bubbler Network.csv###{'B': 13, 'A': 20, 'E': 14, 'D': 9, 'C': 18}
-Spray Network.csv###Spray Network,    Total GPM = 1536.730,	Number of valves = 57
-Spray Network.csv###{'B': 8, 'A': 12, 'E': 9, 'D': 10, 'C': 9}
