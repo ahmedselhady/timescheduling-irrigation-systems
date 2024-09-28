@@ -38,7 +38,9 @@ export default function RootLayout({
         <AppWrapper>
           <Header />
           <DrawerEle />
-          <Main className="min-h-[calc(100vh-64px)] px-6">{children}</Main>
+          <Main className="min-h-[calc(100vh-64px)] px-2 sm:px-6">
+            {children}
+          </Main>
         </AppWrapper>
       </body>
     </html>

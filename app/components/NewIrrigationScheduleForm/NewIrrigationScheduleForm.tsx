@@ -11,11 +11,12 @@ import {
   FormControl,
   Input,
   InputLabel,
-  FormGroup,
   FormControlLabel,
   TextField,
   Typography,
 } from "@mui/material";
+import WarningIcon from "@mui/icons-material/Warning";
+import CircularProgress from "@mui/material/CircularProgress";
 import Checkbox from "@mui/material/Checkbox";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import { useAppContext } from "@/context";
@@ -30,14 +31,12 @@ interface CheckboxState {
 
 const NewIrrigationScheduleForm = () => {
   const router = useRouter();
-  const {
-    toggleShowResults,
-    handleSaveData,
-    pumpUnitValue,
-    isSmScreen,
-    pumpUnitValueInputHandler,
-  } = useAppContext();
 
+  const { handleSaveData, pumpUnitValue, pumpUnitValueInputHandler } =
+    useAppContext();
+
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [isError, setIsError] = React.useState<boolean>(false);
   const [uploadedFile, setUploadedFile] = React.useState<File | null>(null);
   const [fileFormat, setFileFormat] = React.useState<string>("");
 
@@ -67,12 +66,16 @@ const NewIrrigationScheduleForm = () => {
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     if (pumpUnitValue === "" || uploadedFile === null) {
-      alert("please enter value or uplaod a file");
+      setIsError(true);
       return;
     }
-    handleSaveData(newData);
-    toggleShowResults();
-    router.push("/results");
+    setIsLoading(true);
+    try {
+      handleSaveData(newData);
+    } catch (err) {
+    } finally {
+      router.push("/results");
+    }
   };
 
   return (
@@ -88,11 +91,16 @@ const NewIrrigationScheduleForm = () => {
       <CardContent>
         <FormControl className="flex justify-center gap-8">
           <Input
+            required
             onChange={handleFileChange}
             type="file"
             className="custom-file-upload border-2 border-dashed bg-[#F8F8FF] h-[9rem] sm:h-[14.625rem] w-full"
             inputProps={{ style: { height: "100%" } }}
-            sx={{ borderColor: "primary.main" }}
+            sx={{
+              borderColor: `${
+                !isError || uploadedFile ? "primary.main" : "error.main"
+              }`,
+            }}
             disableUnderline
           />
           <InputLabel
@@ -130,8 +138,18 @@ const NewIrrigationScheduleForm = () => {
             id="outlined-basic"
             label="Pump Unit Estimated GPM"
             variant="outlined"
+            error={isError && pumpUnitValue.toString().trim() === ""}
           />
         </FormControl>
+        {isError && pumpUnitValue.toString().trim() === "" && (
+          <InputLabel
+            error
+            className="absolute flex items-center gap-2 pt-2 text-sm"
+          >
+            <WarningIcon className="text-sm" />
+            Incorrect entry.
+          </InputLabel>
+        )}
       </CardContent>
       <CardActions className="flex flex-col justify-center items-center">
         <div className="w-full flex flex-col sm:flex-row justify-between items-start pl-3 sm:pl-0 py-3 sm:py-7">
@@ -166,14 +184,19 @@ const NewIrrigationScheduleForm = () => {
             label="Accept 10% higher"
           />
         </div>
-        <div className="w-full flex items-center justify-center my-4">
+        <div className="w-full flex flex-col-reverse items-center justify-center my-4">
           <Button
+            disabled={isLoading}
             type="submit"
             onClick={handleFileUpload}
-            sx={{ background: "#483EA8", width: "100%", padding: "0.75rem" }}
+            sx={{ width: "100%", padding: "0.75rem" }}
             variant="contained"
           >
-            Calculate
+            {!isLoading ? (
+              "Calculate"
+            ) : (
+              <CircularProgress size="25px" sx={{ color: "white" }} />
+            )}
           </Button>
         </div>
       </CardActions>

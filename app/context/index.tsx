@@ -8,8 +8,6 @@ import { useTheme, useMediaQuery } from "@material-ui/core";
 interface AppContextType {
   drawerIsOpened: boolean;
   handleDrawerToggle: () => void;
-  showResult: boolean;
-  toggleShowResults: () => void;
   handleSaveData: (payload: ResponseData) => void;
   groups: ResponseData | null;
   pumpUnitValue: string | number;
@@ -27,7 +25,6 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
 
   const [drawerIsOpened, setDrawerIsOpen] = React.useState(!isMdScreen);
   const [groups, setGroups] = React.useState<ResponseData | null>(null);
-  const [showResult, setShowGroups] = React.useState<boolean>(false);
   const [pumpUnitValue, setPumpUnitValue] = React.useState<number | string>("");
 
   React.useEffect(() => {
@@ -46,10 +43,6 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
     setDrawerIsOpen((prevState) => !prevState);
   };
 
-  const toggleShowResults = () => {
-    setShowGroups((preState) => !preState);
-  };
-
   const pumpUnitValueInputHandler = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -61,8 +54,6 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
       value={{
         drawerIsOpened,
         handleDrawerToggle,
-        showResult,
-        toggleShowResults,
         handleSaveData,
         groups,
         pumpUnitValue,

@@ -15,12 +15,12 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { redirect } from "next/navigation";
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
+const StyledTableRow = styled(TableRow)(() => ({
   "&:nth-of-type(odd)": {
     backgroundColor: "#ADD8E6",
   },
   "&:hover": {
-    backgroundColor: "#8aadb8", // choose a color for hover state
+    backgroundColor: "#8aadb8",
   },
   // hide last border
   "&:last-child td, &:last-child th": {
@@ -59,13 +59,14 @@ const Groups = () => {
   const networkValveCounts = countValvesForEachNetwork();
 
   return (
-    <div className="flex flex-col max-w-[95%] gap-8 my-4">
+    <div className="flex flex-col w-full sm:max-w-[95%] gap-8 my-4">
       <div className="flex items-center justify-center">
         <Card sx={{ width: "35rem" }}>
-          <CardContent className="flex justify-between">
+          <CardContent className="grid grid-cols-2 sm:grid-cols-3 gap-y-4 gap-16 sm:gap-0 justify-between">
             <div>
               <Typography
                 gutterBottom
+                className="text-nowrap"
                 sx={{ color: "text.secondary", fontSize: 14 }}
               >
                 Estimated Pump GPM
@@ -93,6 +94,7 @@ const Groups = () => {
             </div>
             <div>
               <Typography
+                className="text-nowrap"
                 gutterBottom
                 sx={{ color: "text.secondary", fontSize: 14 }}
               >
@@ -107,22 +109,34 @@ const Groups = () => {
       </div>
       <div className="flex flex-col gap-24">
         {groups?.batch_data.map((item) => (
-          <div className="flex flex-col gap-3">
+          <div key={item.network} className="flex flex-col gap-3">
             <Card sx={{ width: "100%" }}>
-              <CardContent className="flex flex-col sm:flex-row gap-4 sm:gap-36">
+              <CardContent className="flex flex-col sm:flex-row gap-4 md:gap-36">
                 <div>
-                  <Typography variant="h5" component="div">
+                  <Typography
+                    variant="h5"
+                    className="text-lg sm:text-2xl"
+                    component="div"
+                  >
                     <strong>{item.network}</strong>
                   </Typography>
                 </div>
                 <div>
-                  <Typography variant="h5" component="div">
+                  <Typography
+                    variant="h5"
+                    component="div"
+                    className="text-lg sm:text-2xl"
+                  >
                     <strong>Total GPM:</strong>{" "}
                     {item.network_total_gpm.toFixed(3)}
                   </Typography>
                 </div>
                 <div>
-                  <Typography variant="h5" component="div">
+                  <Typography
+                    variant="h5"
+                    component="div"
+                    className="text-lg sm:text-2xl"
+                  >
                     <strong> Number of valves: </strong>
                     {networkValveCounts[item.network] ?? "N/A"}
                   </Typography>
@@ -136,8 +150,10 @@ const Groups = () => {
             >
               <Table className="border-l bg-slate-50 flex">
                 <Table>
-                  <TableHead className="text-nowrap">
-                    <TableCell className="bg-[#4ADEDE]">Batch ID</TableCell>
+                  <TableHead className="sm:text-nowrap">
+                    <TableCell className="px-1 sm:px-3 bg-[#4ADEDE]">
+                      Batch ID
+                    </TableCell>
                     <TableCell className="bg-[#797EF6]">
                       # Valves / Batch
                     </TableCell>
@@ -147,12 +163,9 @@ const Groups = () => {
                   </TableHead>
                   <TableBody>
                     {item.batchs.map((batchsItem, index) => (
-                      <React.Fragment key={`fragment-${batchsItem.batch_id}`}>
-                        <TableRow
-                          className="text-nowrap"
-                          key={`batch-${batchsItem.batch_id}`}
-                        >
-                          <TableCell className="bg-[#4ADEDE]">
+                      <React.Fragment key={`batch-${batchsItem.batch_id}`}>
+                        <TableRow className="text-nowrap">
+                          <TableCell className="bg-[#4ADEDE] px-1 sm:px-3">
                             Batch: <strong>{batchsItem.batch_id}</strong>
                           </TableCell>
                           <TableCell className="bg-[#797EF6]">
@@ -182,7 +195,7 @@ const Groups = () => {
                 </Table>
                 <div className="overflow-x-scroll no-scrollbar border-l">
                   <TableHead>
-                    <TableCell>.</TableCell>
+                    <TableCell className="py-[3.25rem] sm:py-4">.</TableCell>
                   </TableHead>
                   <TableBody>
                     {item.batchs.map((batchItem) => (
