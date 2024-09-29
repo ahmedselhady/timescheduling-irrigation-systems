@@ -143,7 +143,7 @@ const Groups = () => {
               className="mx-auto  max-h-96"
             >
               <Table className="border-l bg-slate-50 flex">
-                <Table>
+                <Table className="max-w-[30rem]">
                   <TableHead className="sm:text-nowrap">
                     <TableCell className="px-1 sm:px-3 bg-[#4ADEDE]">
                       Batch ID

@@ -7,6 +7,7 @@ import Header from "@/components/Header/Header";
 import DrawerEle from "@/components/Drawer/Drawer";
 import { CssBaseline } from "@mui/material";
 import { Main, DrawerHeader } from "@/components/Main/Main";
+import { SnackbarProvider } from "notistack";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

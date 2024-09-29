@@ -14,8 +14,6 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import { useAppContext } from "@/context";
-import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
-import ListIcon from "@mui/icons-material/List";
 import Image from "next/image";
 
 import { drawerWidth } from "@/constants";
@@ -26,7 +24,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
   justifyContent: "flex-end",
 }));
@@ -77,7 +74,7 @@ const DrawerEle = () => {
       <List>
         <Link href="/" onClick={handleDrawerToggle}>
           <ListItem disablePadding>
-            <ListItemButton>
+            <ListItemButton onClick={() => window.location.reload()}>
               <ListItemIcon>
                 <InboxIcon />
               </ListItemIcon>
