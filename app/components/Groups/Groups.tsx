@@ -59,48 +59,50 @@ const Groups = () => {
   const networkValveCounts = countValvesForEachNetwork();
 
   return (
-    <div className="flex flex-col w-full sm:max-w-[95%] gap-8 my-4">
-      <div className="flex items-center justify-center">
-        <Card sx={{ width: "35rem" }}>
-          <CardContent className="grid grid-cols-2 sm:grid-cols-3 gap-y-4 gap-16 sm:gap-0 justify-between">
-            <div>
-              <Typography
-                gutterBottom
-                className="text-nowrap"
-                sx={{ color: "text.secondary", fontSize: 14 }}
-              >
-                Estimated Pump GPM
-              </Typography>
-              <Typography variant="h5" component="div">
-                {Number(pumpUnitValue).toFixed(1)}
-              </Typography>
-            </div>
-            <div>
-              <Typography
-                gutterBottom
-                sx={{ color: "text.secondary", fontSize: 14 }}
-              >
-                Pump Type
-              </Typography>
-              <Typography variant="h5" component="div">
-                {groups?.pump_type}
-              </Typography>
-            </div>
-            <div>
-              <Typography
-                className="text-nowrap"
-                gutterBottom
-                sx={{ color: "text.secondary", fontSize: 14 }}
-              >
-                Total Number of batches
-              </Typography>
-              <Typography variant="h5" component="div">
-                {groups?.total_num_batches}
-              </Typography>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+    <div className="flex flex-col w-full sm:max-w-[95%] gap-8 my-4 mb-36">
+      {groups !== null && (
+        <div className="flex items-center justify-center">
+          <Card sx={{ width: "35rem" }}>
+            <CardContent className="grid grid-cols-2 sm:grid-cols-3 gap-y-4 gap-16 sm:gap-0 justify-between">
+              <div>
+                <Typography
+                  gutterBottom
+                  className="text-nowrap"
+                  sx={{ color: "text.secondary", fontSize: 14 }}
+                >
+                  Estimated Pump GPM
+                </Typography>
+                <Typography variant="h5" component="div">
+                  {Number(pumpUnitValue).toFixed(1)}
+                </Typography>
+              </div>
+              <div>
+                <Typography
+                  gutterBottom
+                  sx={{ color: "text.secondary", fontSize: 14 }}
+                >
+                  Pump Type
+                </Typography>
+                <Typography variant="h5" component="div">
+                  {groups?.pump_type}
+                </Typography>
+              </div>
+              <div>
+                <Typography
+                  className="text-nowrap"
+                  gutterBottom
+                  sx={{ color: "text.secondary", fontSize: 14 }}
+                >
+                  Total Number of batches
+                </Typography>
+                <Typography variant="h5" component="div">
+                  {groups?.total_num_batches}
+                </Typography>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
       <div className="flex flex-col gap-24">
         {groups?.batch_data.map((item) => (
           <div key={item.network} className="flex flex-col gap-3">

@@ -37,7 +37,7 @@ const DrawerEle = () => {
       disableEnforceFocus
       hideBackdrop
       ModalProps={{
-        onBackdropClick: handleDrawerToggle,
+        onBackdropClick: () => handleDrawerToggle(),
         keepMounted: true,
         disableScrollLock: true,
       }}

@@ -4,11 +4,25 @@ import React, { useContext, createContext } from "react";
 
 import { ResponseData } from "@/type";
 import { useTheme, useMediaQuery } from "@material-ui/core";
+import { usePathname } from "next/navigation";
 
 interface SnackbarData {
   message: string;
   action?: string;
   actionHandler?: () => void;
+}
+
+interface Modal {
+  title: string;
+  message: string;
+  onConfirm: {
+    label: string;
+    action?: () => void;
+  };
+  onDismiss: {
+    label: string;
+    action?: () => void;
+  };
 }
 
 interface AppContextType {
@@ -20,19 +34,30 @@ interface AppContextType {
   pumpUnitValueInputHandler: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isSmScreen: boolean;
   showSnackBar: boolean;
-  handleShowingSnackBar: (payload: boolean, data?: SnackbarData) => void;
+  handleShowingSnackBar: (show: boolean, data?: SnackbarData) => void;
   snackBarData: SnackbarData;
+  showModal: boolean;
+  handleShowingModal: (show: boolean, data?: Modal) => void;
+  modalData: Modal;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppWrapper({ children }: { children: React.ReactNode }) {
+  const pathName = usePathname();
   // Layout
   const theme = useTheme();
   const isMdScreen = useMediaQuery(theme.breakpoints.down("md"));
   const isSmScreen = useMediaQuery(theme.breakpoints.down("xs"));
 
   const [drawerIsOpened, setDrawerIsOpen] = React.useState(!isMdScreen);
+
+  React.useEffect(() => {
+    if (pathName === "/results" && drawerIsOpened) {
+      setDrawerIsOpen(false);
+    }
+  }, [pathName]);
+
   const [groups, setGroups] = React.useState<ResponseData | null>(null);
   const [pumpUnitValue, setPumpUnitValue] = React.useState<number | string>("");
 
@@ -41,6 +66,14 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
     message: "",
     action: "",
     actionHandler: () => {},
+  });
+
+  const [showModal, setShowModal] = React.useState(false);
+  const [modalData, setModalData] = React.useState<Modal>({
+    title: "",
+    message: "",
+    onConfirm: { action: () => {}, label: "" },
+    onDismiss: { action: () => {}, label: "" },
   });
 
   React.useEffect(() => {
@@ -55,6 +88,12 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
     setShowSnackBar(show);
     if (data) {
       setSnackBarData(data);
+    }
+  };
+  const handleShowingModal = (show: boolean, data?: Modal) => {
+    setShowModal(show);
+    if (data) {
+      setModalData(data);
     }
   };
 
@@ -85,6 +124,9 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
         handleShowingSnackBar,
         showSnackBar,
         snackBarData,
+        showModal,
+        handleShowingModal,
+        modalData,
       }}
     >
       {children}

@@ -39,6 +39,7 @@ const NewIrrigationScheduleForm = () => {
     pumpUnitValue,
     pumpUnitValueInputHandler,
     handleShowingSnackBar,
+    handleShowingModal,
   } = useAppContext();
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -119,18 +120,39 @@ const NewIrrigationScheduleForm = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        setIsLoading(false);
+        let data = localStorage.getItem("cachedData");
+        if (!data) {
+          handleShowingSnackBar(true, {
+            message: "Cannot create a schedule for the given Data",
+          });
+          return;
+        }
+        let parsedData = JSON.parse(data);
+        handleShowingModal(true, {
+          title: "Cannot create a schedule for the given Data",
+          message: "Do you want to use latest calculations",
+          onConfirm: {
+            label: "sure",
+            action: async () => {
+              handleSaveData(parsedData);
+              router.push("/results");
+            },
+          },
+          onDismiss: { label: "No", action: () => handleShowingModal(false) },
+        });
+        return;
       }
 
       const result = await response.json();
-      handleSaveData(result);
       setIsLoading(false);
+      localStorage.setItem("cachedData", JSON.stringify(result));
+      handleSaveData(result);
+      router.push("/results");
     } catch (err) {
       setIsError(true);
       setIsLoading(false);
       console.error("There was an error uploading the file: ", err);
-    } finally {
-      router.push("/results");
     }
   };
 
@@ -193,9 +215,9 @@ const NewIrrigationScheduleForm = () => {
             </>
           ) : (
             <div className="flex items-center justify-between border-y-4 border-gray-500 border-opacity-20 w-full py-3">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-0 sm:gap-3">
                 <DescriptionIcon color="primary" className="text-3xl" />
-                {uploadedFile.name}
+                <p className="text-sm">{uploadedFile.name}</p>
               </div>
               <div>
                 <IconButton onClick={() => setUploadedFile(null)}>
