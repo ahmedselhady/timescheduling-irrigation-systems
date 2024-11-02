@@ -5,13 +5,14 @@ from pandas import DataFrame
 from itertools import chain
 from utils import Utils as ut
 from constants import network_type_map
+from pprint import pprint
 
 class TimeSchedulingAlgorithm:
 
 
 
     @classmethod
-    def find_best_scheduling(cls, data: DataFrame, pump_gpm:float, pump_type:int, allow_exact:bool=True, allow_overdosing:bool=False, allow_underdosing:bool=False):
+    def find_best_scheduling(cls, data: DataFrame, pump_gpm:float, pump_type:int, allow_exact:bool=True, allow_overdosing:bool=False, allow_underdosing:bool=False, configs:dict={}):
 
         best_number_of_batches = 99999
         best_solution = None
@@ -23,7 +24,7 @@ class TimeSchedulingAlgorithm:
             pump_gpm_corrected = pump_gpm * correction_percentage
             
             try:
-                networks_batches_solution = cls.compute_schedule_trial(data, pump_gpm_corrected, pump_type)
+                networks_batches_solution = cls.compute_schedule_trial(data, pump_gpm_corrected, pump_type, configs)
             except NoSolution:
                 print(f"Could not find a working {solution_type} solution for pump GPM of {pump_gpm}")
 
@@ -51,7 +52,6 @@ class TimeSchedulingAlgorithm:
         nearest_gpm, nearest_gpm_delta = -1, 99999
 
         pump_motor_gpm = pump_gpm/pump_type_
-        #accepted_ranges = [ (pump_motor_gpm*i*0.9,pump_motor_gpm*i, pump_motor_gpm*i*1.1)  for i in range(1, pump_type+1) ] 
 
         for range_indx in range(1, pump_type_+1):
             accepted_range = pump_motor_gpm*range_indx
@@ -133,22 +133,29 @@ class TimeSchedulingAlgorithm:
 
 
     @classmethod
-    def compute_schedule_trial(cls, data: DataFrame, pump_gpm:float, pump_type: int):
+    def compute_schedule_trial(cls, data: DataFrame, pump_gpm:float, pump_type: int, configs:dict):
 
         valve_type_keys = data.valve_type_key.unique().tolist()
 
         networks_batches = []
-
+        print("\n=============================")
+        pprint(f"Valve type keys: {configs}")
+        print("\n=============================")
+        
+        
+        
+        
         for network_key in valve_type_keys:
-
+            effective_gpm = float(configs.get(f'{network_key}_gpm_util', "100%")[:-1]) * pump_gpm /100
+            
             per_key_valves = data.loc[data["valve_type_key"] == network_key][
                 ["Valve", "gpm_int", "gpm"]
             ]
 
-            solution_dictionary =  cls.distibute_valves_into_batches(per_key_valves, pump_gpm)
+            solution_dictionary =  cls.distibute_valves_into_batches(per_key_valves, effective_gpm)
 
             ##* Try further optimization of the problem
-            solution_dictionary = cls.check_for_further_optimizations(solution_dictionary, pump_gpm, pump_type)
+            solution_dictionary = cls.check_for_further_optimizations(solution_dictionary, effective_gpm, pump_type)
 
             column_keys = {k for x in solution_dictionary for k in x.keys()}
 

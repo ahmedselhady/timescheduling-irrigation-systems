@@ -14,7 +14,6 @@ import datetime
 from constants import network_type_map
 from statistics import median_high
 import os, re
-from pprint import pprint
 
 st.set_page_config(layout="wide", page_icon=":memo:")
 
@@ -172,6 +171,7 @@ if st.session_state.get("authentication_status", False):
                     allow_exact,
                     allow_oversampling,
                     allow_undersampling,
+                    st.session_state.to_dict()
                 )
                 print("got solution")
 
@@ -450,9 +450,7 @@ if st.session_state.get("authentication_status", False):
         valve_type.iloc[0] = "Valve Type"
 
         temp_ = pd.concat((batch_gpms, valve_type), axis=1)
-        print("=============")
-        pprint(temp_)
-        print("=============")
+        
         total_gpd = temp_.apply(
             lambda x: (
                 ""
