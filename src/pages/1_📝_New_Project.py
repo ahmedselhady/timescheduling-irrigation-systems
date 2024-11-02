@@ -11,13 +11,15 @@ import plotly.express as px
 import pickle as pkl
 import numpy as np
 import datetime
-from constants import network_type_map
+from constants import network_type_map, pump_type_map
 from statistics import median_high
 import os, re
+from math import ceil
 
 st.set_page_config(layout="wide", page_icon=":memo:")
 
 data_frames = []
+
 
 
 def add_commas(line, maxwidth):
@@ -75,14 +77,19 @@ if st.session_state.get("authentication_status", False):
 
     with st.form("GPM Valve Grouping Algorithm") as form_app:
 
-        project_title = st.text_input("Project Title")
+        st.header("New Time Scheduling Project", divider="rainbow")
+        
+        project_title = st.text_input("Project Title", placeholder="New Project")
 
-        st.write("Configurations:")
-        uploaded_file = st.file_uploader("Choose a file")
-        pump_unit_estimated_gpm = st.number_input("Pump Unit Estimated GPM")
+        uploaded_file = st.file_uploader("Select Project File")
 
+        st.subheader("Configurations:")
+        
+        pump_data_col1, pump_data_col2 = st.columns([1,1], gap="large")
+        pump_unit_estimated_gpm = pump_data_col1.number_input("Pump Unit Estimated GPM")
+        pump_type_input = pump_data_col2.selectbox("Pump Unit Type", ("Single", "Twin", "Triplet"), index=0)
+        
         checkbox_columns = st.columns(7)
-
         allow_undersampling = checkbox_columns[0].checkbox("Accept 10% lower")
         allow_exact = checkbox_columns[1].checkbox("Accept exact GPM", value=True)
         allow_oversampling = checkbox_columns[2].checkbox("Accept 10% higher")
@@ -119,11 +126,9 @@ if st.session_state.get("authentication_status", False):
                 )
                 runtime_handler.divider()
 
-        c1, c2, c3 = st.columns([1, 1, 1], gap="large")
+        _, __, ___, c3 = st.columns([1, 1, 1, 1], gap="large")
         with c3:
-            c3_1, c3_2 = st.columns([1, 1])
-            with c3_2:
-                submitted = st.form_submit_button("Calculate")
+            submitted = c3.form_submit_button("**:blue[Calculate]**")
 
         if submitted:
 
@@ -158,10 +163,11 @@ if st.session_state.get("authentication_status", False):
 
                 data = ut.read_datafile_as_dataframe(uploaded_file)
                 print("Got data")
-                pump_type, pump_type_name = ut.get_pump_type(
-                    data, pump_unit_estimated_gpm
-                )
-                # per_pump_gpm = pump_unit_estimated_gpm / pump_type
+                pump_type, pump_type_name = pump_type_map[pump_type_input], pump_type_input #ut.get_pump_type(   data, pump_unit_estimated_gpm)
+                
+                data["gpm_int"] = data["gpm"].apply(lambda x: ceil(x))
+                data["valve_type_key"] = data.Valve.astype(str).apply( lambda x: x.strip().split("-")[-1][0])
+                
                 valve_type_keys = data.valve_type_key.unique().tolist()
                 print("finding best schedule")
                 solution = tsa.find_best_scheduling(

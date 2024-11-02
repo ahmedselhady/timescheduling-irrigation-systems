@@ -7,3 +7,10 @@ network_type_map = {
     "M": "Medium Drip",
     "R": "Rotro",
 }
+
+pump_type_map = {
+    "Single": 1,
+    "Twin": 2,
+    "Triplet": 3
+}
+
